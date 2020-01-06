@@ -1,0 +1,5 @@
+numpy
+glob
+re
+matplotlib
+scipy*
