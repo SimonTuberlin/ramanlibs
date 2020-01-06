@@ -1,0 +1,3 @@
+Raman-LIBS library for Python 3.(7)
+
+Let's try to share our achievements in data handling...
