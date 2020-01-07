@@ -29,7 +29,7 @@ def readSif(sif, path, **options):
 		path: path to the .sif file
 	Known keyword arguments:
 		verbose(bool): Print extra information to stdout, default False
-		silend(bool): Suppress normal reporting to stdout, default False
+		silent(bool): Suppress normal reporting to stdout, default False
 		... # TODO: Check for more options employed here
 	Raises:
 		ValueError: file name not ending in .sif or .sif.bz2

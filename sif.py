@@ -16,13 +16,15 @@ List of functions:
 __version__ = "0.0.1"
 
 # %% header, import libraries
-from .datahandling import saveSifPngs as sif2pngs
-from .datahandling import savegif as sif2gif
-from .datahandling import getFileList
+from .datahandling.general import *
+from .datahandling.andor import *
+# from .datahandling import savegif as sif2gif
+# from .datahandling import getFileList
 #from .datahandling import readSif
 from .classes.Sif import SifFile
 import numpy as np
 import matplotlib.pyplot as plt
+
 try:
 	import scipy.ndimage as scimg
 except ImportError as ie:

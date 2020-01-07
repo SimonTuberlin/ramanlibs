@@ -10,7 +10,7 @@ __version__ = "0.0.1"
 
 # %% header, import libraries
 
-from ..datahandling import readSif
+from ramanlibs.datahandling.andor import readSif
 import numpy as np
 
 # %%
