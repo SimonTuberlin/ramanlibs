@@ -1,0 +1,63 @@
+<html>
+<style>
+.func { padding-left: 5mm; text-indent: -5mm}
+.call { padding-left: 5mm}
+body { reset-counter: section}
+h2 { counter-reset: subsection; counter-increment: section}
+h2:before { content: counter(section)" " }
+h3 { counter-increment: subsection}
+h3:before { content: counter(section)"."counter(subsection)" " }
+</style>
+<head>
+<title>Raman-LIBS library for Python 3.(7)</title>
+<h1>Raman-LIBS library for Python 3.(7)</h1>
+
+Let's try to share our achievements in data handling...<br><br>
+
+<hr>
+
+</head>
+<body>
+
+<h2>Preparations</h2>
+<p>Place the ramanlibs folder in a directory that Python searches for imports.
+This will likely be a "site-packages" folder in your user profile or the directory where your own scripts are stored.
+Whereever using this module, place proper import statements in the preamble of your code:
+<p class=call>
+	import ramanlibs.sif as sif # and/or <br>
+	import ramanlibs.avantes as avantes
+</p>
+For all examples, we will assume this import-as alias to be used.
+
+<h2>General purpose helper functions</h2>
+Usually no need to take of them.
+They are internally used to parse directories for suitable files and identify measurement details in file names.
+If you want to retrieve the list of files instead of their contents, feel free to import these parts with
+<div class=call> import ramanlibs.general</div>
+Then you can e.g. get the list of files and the index i in the respective path where the file name starts with
+<div class=call>files, i = ramanlibs.general.getFileList(path, pattern, **options)</div>
+//TODO: Check what else coulb be done with this package...
+
+<h2>The sif-package</h2>
+<h4>### Remember import ramanlibs.sif as sif ###</h4>
+The sif sub-package (hopefully) works separate from the avantes function to avoid cluttering the memory with unnecessary avantes calibration data and competence.
+It provides functions to load single files and whole directories of .sif files into memory, basic operations on sif data, and the underlying Sif class holding the data.
+
+<h3>Functions</h3>
+<div class=func>sif.load(path, pattern="*.sif", **options)<br>
+This function loads single files and returns a Sif object, or all files in &lang;path&rang; matching &lang;pattern&rang; and returns a list of Sif objects. </div>
+
+<div class=func>sif.plot(bla)<br>
+This makes a plot, I guess</div>
+<div class=func>sif.rotate<br>
+TODO</div>
+<div class=func>sif.saveSifPngs<br>
+TODO</div>
+<div class=func>sif.savegif<br>
+TODO</div>
+
+<h3>The Sif-class</h3>
+
+<h2>The avantes-package</h2>
+</body>
+</html>
