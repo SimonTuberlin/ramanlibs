@@ -1,0 +1,3 @@
+ssh	git@github.com:SimonTuberlin/ramanlibs.git
+https	https://github.com/SimonTuberlin/ramanlibs.git
+zip	https://github.com/SimonTuberlin/ramanlibs/archive/master.zip

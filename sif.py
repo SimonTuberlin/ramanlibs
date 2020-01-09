@@ -41,6 +41,8 @@ def load(path,fname="*.sif", **options):
         s = SifFile(f, **options)
 #        readSif(s, f, **options)
         retlist.append(s)
+    if len(retlist) == 1:
+        return retlist[0]
     return retlist
 
 if scimg:
