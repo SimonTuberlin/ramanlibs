@@ -114,3 +114,29 @@ def plot(sif,frame=0, **options):
         plt.colorbar()
     plt.tight_layout()
     plt.show()
+
+def plotAll(sif,**options):
+    """Plot all frames in sif object in separate figure
+
+    This will create a figure for each frame in a kinetic series using
+    ramanlibs.sif.plot() function. Consult plot documentation for options.
+    A range or list of frames can be provided to reduce number of figures.
+    Parameters:
+        sif: the sif object to plot
+    Opt. parameters:
+        range: iterable specifying the frame indices to plot, default range(nFrames)
+        label: boolean, use corresponding frame index as plot title, defaut False
+    Return:
+        ---nothing---"""
+    framerange = options.pop("range",range(sif.kineticlength))
+    label = options.pop("label",False)
+    if len(framerange) > 15:
+        print("This will produce {:d} figures. Are you sure? <y/n>".format(sif.kineticlength))
+        response = input()
+        if not response in ["y","Y","yes","YES"]:
+            return
+    for i in framerange:
+        plot(sif, i, **options)
+        if label:
+            plt.title(str(i))
+            plt.tight_layout()
