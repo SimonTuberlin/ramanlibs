@@ -78,8 +78,8 @@ def plot(sif,frame=0, **options):
 
     # TODO: Check indices for sif.data.shape;
     # might be deprecated due to kinetic series support
-    xrange = (options.pop("xLo", 0), options.pop("xHi", sif.data.shape[-1]))
-    yrange = (options.pop("yLo", 0), options.pop("yHi", sif.data.shape[-2]))
+    xrange = (options.pop("xlo", 0), options.pop("xli", sif.data.shape[-1]))
+    yrange = (options.pop("ylo", 0), options.pop("yli", sif.data.shape[-2]))
     extent = options.pop("extent", False)
     if not extent:
         extent = [xrange[0]-0.5, xrange[1]+0.5, yrange[1]+.5, yrange[0]-.5]
