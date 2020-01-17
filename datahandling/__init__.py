@@ -7,6 +7,6 @@ in other functions of the ramanlibs library.
 
 # %% Empty __init__.py
 
-print("imported datahandling...")
+
 __version__ = "0.0.1"
 #__all__ = [savegif,getFileList,readSif]

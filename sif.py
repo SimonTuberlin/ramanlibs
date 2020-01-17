@@ -24,12 +24,19 @@ from .datahandling.andor import *
 from .classes.Sif import SifFile
 import numpy as np
 import matplotlib.pyplot as plt
+#import os
 
 try:
 	import scipy.ndimage as scimg
 except ImportError as ie:
-	print("Failed to import scipy.ndimage. Sif.rotate(...) will not be available")
+	print("Failed to import scipy.ndimage. sif.rotate(...) will not be available")
 	print(ie)
+
+try:
+    import h5py
+except ImportError as ie:
+    print("Failed to import hdf5 module h5py. sif2hdf() will not be available")
+    print(ie)
 
 def load(path,fname="*.sif", **options):
     try:
@@ -52,6 +59,25 @@ if scimg:
             scimg.rotate(sif.orig, ang, reshape=False, output=sif.data)
         sif.rotated = ang
 
+if h5py:
+    def sif2hdf(path, **options):
+        """Convert sif objects or files(s) to .h5 file(s)
+        
+        ... if file or path: import
+        ... export to source directory/<filenamebase>.hdf5
+        ... probably add some options
+        """
+        if isinstance(path, SifFile):
+            sifs = path
+        else:
+            sifs = load(path)
+        if not isinstance(sifs, list):
+            sifs = [sifs]
+        for s in sifs:
+#            h5f = h5py.File(os.path.splitext(s.path)[0]+".hdf5", "w") #robust against other names than .sif
+            h5f = h5py.File(s.path[:-3]+"hdf5", "w")
+            h5f.close()
+                
 
 def plot(sif,frame=0, **options):
     if options.pop("fillROI", False):
