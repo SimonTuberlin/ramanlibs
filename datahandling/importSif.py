@@ -95,6 +95,7 @@ def readSif(sif, path, **options):
 	sif.acqMode = camSettings[9] # b'\x01' -> Single, 02 accumulate, 03 kinetic, 00 real time
 	sif.expTime = float(camSettings[12])
 	sif.realExpTime = float(camSettings[13])
+	sif.accumulations = int(camSettings[15])
 	sif.readMode = camSettings[27] # bx02 MultiTrack, 04 Image, 00 FVB?
 	sif.camTempUnst = float(camSettings[47])
 	if sif.camTemp == -999:
