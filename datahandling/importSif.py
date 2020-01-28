@@ -123,8 +123,8 @@ def readSif(sif, path, **options):
 	f.readline()
 	acq_params = f.readline().strip().decode().split()
 	sif.gate_delay = float(acq_params[6])/1e12
-	sif.gate_time = float(acq_params[7])/1e12
-	sif.step_size = float(acq_params[12])/1e12
+	sif.gate_width = float(acq_params[7])/1e12
+	sif.gate_stepsize = float(acq_params[12])/1e12
 	#print(acq_params)
 	for line in iter(f.readline, b""):
 		if line.startswith(b'Pixel'):
