@@ -7,6 +7,8 @@ Created on Mon Jan 20 10:50:24 2020
 
 import numpy as np
 from scipy.signal import argrelmin
+from scipy.interpolate import interp2d
+from scipy.interpolate import RectBivariateSpline
 from abel.hansenlaw import hansenlaw_transform
 
 ##########################################################################
@@ -27,7 +29,8 @@ def hillclimbing_1d(line, hw_val):
 
 ##########################################################################
 
-def find_halfwidth(arr, method, **kwargs):
+def find_halfwidth(arr, **kwargs):
+    method = kwargs.get('method', 'hillclimbing')
     if method == 'stupid':
         half_val = np.zeros(np.shape(arr))
         for i in range(len(half_val)):
@@ -171,20 +174,81 @@ def transform_left_half_im(dat, center):
 ##########################################################################
     
 def calc_velocity(dat, stepsize, **kwargs):
-    center_idx = kwargs.get('center', int(np.shape(dat)[2]/2))
+    method = kwargs.get('method', 'centerline')
     const = kwargs.get('const', 972/15)
+    if method == 'centerline':
+        center_idx = kwargs.get('center', np.full(np.shape(dat)[0], int(np.shape(dat)[2]/2))) #center_idx = kwargs.get('center', int(np.shape(dat)[2]/2))
+        if type(center_idx) == int:
+            center_idx = np.full(np.shape(dat)[0], center_idx)
+        avg_idx = kwargs.get('avg_idx', 5)
+        
+        vertical_axis = np.arange(np.shape(dat)[1])/const
+        vel_points = []
+        
+        for i, content in enumerate(dat):
+            center_line = np.mean(content[:, center_idx[i]-avg_idx:center_idx[i]+avg_idx], axis = 1)
+            center_line = np.flip(center_line)
+            for j, px in enumerate(center_line):
+                if px > 0:
+                    vel_points.append(len(center_line)-1-j) #because we are counting from the top, but position is from bottom
+                    break
+        time = np.arange(0, len(vel_points)*stepsize, stepsize)
+        hw_pos = vertical_axis[vel_points]
+        velocity = np.gradient(hw_pos*1e-3, time)
+        return time, hw_pos, velocity
+    if method == 'radial': #totally not working so far
+        center_idx = kwargs.get('center', (int(np.shape(dat)[2]/2), int(np.shape(dat)[2]/2)))
+        vel_points = []
+        for i, content in enumerate(dat):
+            temp_content = np.rot90(content)
+            for j, line in enumerate(temp_content):
+                for k, px in enumerate(line):
+                    if px > 0:
+                        vel_points.append((i, k, j))
+                        print('px > 0')
+                        break
+                    vel_points.append((0, 0, 0))
+        return vel_points
+
+##########################################################################
+def pol2kart(angle, center, rho):
+    x = rho * np.cos(angle) + center[1]
+    y = rho * np.sin(angle) + center[0]
+    return x, y
+
+def kartDat2polDat(dat, center, **kwargs):
+    temp_dat = dat
+    resolution = kwargs.get('resolution', (1000, 1000))
+    #max_length = np.sqrt(np.shape(temp_dat)[0]**2+np.shape(temp_dat)[1]**2)
+    max_length = np.shape(temp_dat)[0]-center[0]
+    rho = np.linspace(0, max_length, resolution[0])
+    angles = np.linspace(0, np.pi, resolution[1])
     
-    vertical_axis = np.arange(np.shape(dat)[1])/const
-    vel_points = []
+    conversion = max_length/resolution[0] #conversion is supposed to be a factor to calculate the interpolated pixel back to normal pixel and then back to mm
+
+    pollines = []
+    for ang in angles:
+        xline, yline = pol2kart(ang, center, rho)
+        pollines.append((xline, yline))
+
+    pol_int = np.zeros((len(rho), len(angles)))
     
-    for i, content in enumerate(dat):
-        center_line = np.mean(content[:, center_idx-5:center_idx+5], axis = 1)
-        center_line = np.flip(center_line)
-        for j, px in enumerate(center_line):
-            if px > 0:
-                vel_points.append(len(center_line)-1-j) #because we are counting from the top, but position is from bottom
-                break
-    time = np.arange(0, len(vel_points)*stepsize, stepsize)
-    hw_pos = vertical_axis[vel_points]
-    velocity = np.gradient(hw_pos*1e-3, time)
-    return time, hw_pos, velocity
+    dat_fit = interp2d(range(temp_dat.shape[1]), range(temp_dat.shape[0]), temp_dat)
+    
+    for i, r in enumerate(rho):
+        for j, theta in enumerate(angles):
+            pol_int[i, j] = dat_fit( pollines[j][0][i],pollines[j][1][i] )
+    
+    # dat_fit = RectBivariateSpline(x=range(temp_dat.shape[0]), y=range(temp_dat.shape[1]), z=temp_dat, kx = 1, ky = 1)
+    
+    # for j, theata in enumerate(angles):
+    #     pol_int[:, j] = dat_fit( pollines[j][0][:],pollines[j][1][:], grid = False)
+        
+    return rho, angles, pol_int, conversion
+
+##########################################################################
+
+def update_progress(progress):
+    print('\r[{0}] {1:.1f}%'.format('#'*(int(progress*20)), progress*100), end="", flush=True)
+    if progress == 1:
+        print(' -- done')

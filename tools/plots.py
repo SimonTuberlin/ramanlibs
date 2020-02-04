@@ -19,10 +19,10 @@ def anim_plot(all_dat, **kwargs):
     if normalize:
         all_dat = all_dat/np.amax(all_dat)
     
-    horizontal_axis = np.arange(len(all_dat[0][0]))/const
-    horizontal_axis = horizontal_axis - horizontal_axis[-1]/2
+    horizontal_axis = kwargs.get('horizontal_axis', np.arange(len(all_dat[0][0]))/const - (np.arange(len(all_dat[0][0]))/const)[-1]/2)
+    #horizontal_axis = horizontal_axis - horizontal_axis[-1]/2
 
-    vertical_axis = np.arange(len(all_dat[0]))/const
+    vertical_axis = kwargs.get('vertical_axis', np.arange(len(all_dat[0]))/const)
     
     fig, axs = plt.subplots(nrows = 1, ncols = 1, figsize = (8.07, 5))
     
